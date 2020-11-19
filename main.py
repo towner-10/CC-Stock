@@ -58,7 +58,7 @@ def getData():
                 print(bcolors.FAIL + "Error getting stock data!" + bcolors.ENDC)
 
             toaster.show_toast(stockStatus, stockName, duration=None)
-            print(bcolors.OKGREEN + bcolors.BOLD + stockStatus + bcolors.ENDC + " | " + stockCheckRequest['loc'] + " | " + stockName[:35] + "...")
+            print(bcolors.OKGREEN + bcolors.BOLD + stockStatus + bcolors.ENDC + " | " + stockCheckRequest['loc'] + " - " + stockCheckRequest['avail'] + " | " + stockName[:35] + "...")
         else:
             print(bcolors.FAIL + bcolors.BOLD + stockStatus + bcolors.ENDC + " | " + stockURL)
 

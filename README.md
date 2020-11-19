@@ -17,3 +17,7 @@ Run the script using `python3 <folder>/main.py` and it will then start running a
 ## Upcoming Features
 
 - 📍 Ability to check where it is in stock and set a prefered location.
+
+## Known Issues
+
+- Listing may be duplicated when printing out data in the console

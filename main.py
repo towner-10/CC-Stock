@@ -8,21 +8,25 @@ from urllib.parse import parse_qs
 
 counter = 0
 
-# Chnage URL to other product such as the RTX 3070
+# Change URL to other product such as the RTX 3070
 # https://www.canadacomputers.com/index.php?cPath=43&sf=:3_7&mfr=&pr=
 URL = 'https://www.canadacomputers.com/index.php?cPath=43&sf=:3_5&mfr=&pr='
+
+# Prefered location
+ENABLE_PREF_LOCATION = True
+LOCATION_CODE = 'LOND'
+
+# Desktop Notification
+ENABLE_DESKTOP_NOTIFICATIONS = True
+
 toaster = ToastNotifier()
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
     CLEAR = '\033[H\033[J'
 
 def getData():
@@ -53,17 +57,24 @@ def getData():
             stockCheckURL = 'https://www.canadacomputers.com/product_info.php?ajaxstock=true&itemid=' + str(parse_qs(parsed.query)['item_id'][0])
 
             try:
-                stockCheckRequest = json.loads(requests.get(stockCheckURL).text)
+                if (ENABLE_PREF_LOCATION == True):
+                    cookies = {'preferloc': LOCATION_CODE}
+                    stockCheckRequest = json.loads(requests.get(stockCheckURL, cookies=cookies).text)
+                else:
+                    stockCheckRequest = json.loads(requests.get(stockCheckURL).text)
+                
             except:
                 print(bcolors.FAIL + "Error getting stock data!" + bcolors.ENDC)
 
-            toaster.show_toast(stockStatus, stockName, duration=None)
-            print(bcolors.OKGREEN + bcolors.BOLD + stockStatus + bcolors.ENDC + " | " + stockCheckRequest['loc'] + " - " + stockCheckRequest['avail'] + " | " + stockName[:35] + "...")
+            if (ENABLE_DESKTOP_NOTIFICATIONS == True):
+                toaster.show_toast(stockStatus, stockName, duration=None)
+
+            print(bcolors.OKGREEN + bcolors.BOLD + stockStatus + bcolors.ENDC + " | " + (stockCheckRequest['loc'] + " - " + str(stockCheckRequest['avail']) + " | " + stockName).ljust(111))
         else:
             print(bcolors.FAIL + bcolors.BOLD + stockStatus + bcolors.ENDC + " | " + stockURL)
 
     counter += 1
 
-    print('\nLoops: ' + str(counter) + '\t Items this loop: ' + str(itemCount))
+    print('\nChecks: ' + str(counter) + '\t Items this loop: ' + str(itemCount))
 
 getData()
